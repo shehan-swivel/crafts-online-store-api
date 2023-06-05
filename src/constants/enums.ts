@@ -7,3 +7,10 @@ export enum ProductCategory {
   TEXTILES = 'Textiles',
   WOOD = 'Wood',
 }
+
+export enum OrderStatus {
+  PENDING = 'PENDING',
+  PROCESSING = 'PROCESSING',
+  COMPLETED = 'COMPLETED',
+  CANCELLED = 'CANCELLED',
+}

@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { S3Service } from 'src/shared/s3.service';
 import { CreateProductDto, ProductQuery, UpdateProductDto } from './dto';
-import { Product } from './schemas/product.schema';
+import { Product, ProductDocument } from './schemas/product.schema';
 
 @Injectable()
 export class ProductsService {
@@ -93,5 +93,28 @@ export class ProductsService {
     }
 
     return product;
+  }
+
+  /**
+   * Retrieves list of products by ids
+   * @param {string[]} ids
+   * @returns {Promise<ProductDocument[]>}
+   */
+  async findByIds(ids: string[]): Promise<ProductDocument[]> {
+    return this.productModel.find({
+      _id: {
+        $in: ids,
+      },
+    });
+  }
+
+  /**
+   * Find by id and update
+   * @param {string} id
+   * @param {object} updateObject
+   * @returns {Promise<ProductDocument>}
+   */
+  async findByIdAndUpdate(id: string, updateObject: object): Promise<ProductDocument> {
+    return this.productModel.findByIdAndUpdate(id, updateObject);
   }
 }

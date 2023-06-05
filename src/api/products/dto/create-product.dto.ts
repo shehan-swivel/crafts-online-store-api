@@ -8,11 +8,11 @@ export class CreateProductDto {
   description: string;
 
   @IsNotEmpty()
-  @IsNumber()
+  // @IsNumber()
   qty: number;
 
   @IsNotEmpty()
-  @IsNumber()
+  // @IsNumber()
   price: number;
 
   @IsNotEmpty()
