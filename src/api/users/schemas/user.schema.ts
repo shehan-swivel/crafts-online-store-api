@@ -27,6 +27,9 @@ export class User {
   // email is using for account recovery
   @Prop({ unique: true })
   email: string;
+
+  @Prop()
+  requirePasswordChange: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -55,7 +55,7 @@ export class OrdersService {
    * @returns {Promise<Order[]>}
    */
   async findAll(): Promise<Order[]> {
-    return this.orderModel.find().sort({ createdAt: 'desc' }).exec();
+    return this.orderModel.find().sort({ createdAt: 'desc' }).populate('items.product').exec();
   }
 
   /**
@@ -80,11 +80,11 @@ export class OrdersService {
 
     // Add cancelled order items back to the product list when order is cancelled
     if (updateOrderStatusDto.status === OrderStatus.CANCELLED) {
-      const productIds = order.items.map((item) => item.product);
+      const productIds = order.items.map((item) => item.product.toString());
       const products = await this.productService.findByIds(productIds);
 
       const itemsMap = order.items.reduce((accumulator, currentValue) => {
-        return { ...accumulator, [currentValue.product]: currentValue.qty };
+        return { ...accumulator, [currentValue.product.toString()]: currentValue.qty };
       }, {});
 
       // Update each product's quantity after order status updated successfully

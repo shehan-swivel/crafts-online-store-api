@@ -1,9 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument, Types } from 'mongoose';
-import { Product } from 'src/api/products/schemas/product.schema';
+import { HydratedDocument } from 'mongoose';
 import { OrderStatus } from 'src/constants/enums';
 import { Address } from './address.schema';
-import { OrderItem } from './order-item.schema';
+import { OrderItem, OrderItemSchema } from './order-item.schema';
 
 export type OrderDocument = HydratedDocument<Order>;
 
@@ -23,7 +22,7 @@ export class Order {
   @Prop({ required: true })
   status: OrderStatus;
 
-  @Prop({ required: true, type: Types.ObjectId, ref: Product.name })
+  @Prop({ type: [OrderItemSchema] })
   items: OrderItem[];
 
   @Prop()

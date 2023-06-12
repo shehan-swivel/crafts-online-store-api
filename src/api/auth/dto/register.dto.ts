@@ -15,4 +15,6 @@ export class RegisterDto {
 
   @IsEmail()
   email: string;
+
+  requirePasswordChange: boolean;
 }

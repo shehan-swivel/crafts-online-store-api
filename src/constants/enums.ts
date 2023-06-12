@@ -3,9 +3,9 @@ export enum Role {
 }
 
 export enum ProductCategory {
-  CLAY = 'Clay',
-  TEXTILES = 'Textiles',
-  WOOD = 'Wood',
+  CLAY = 'CLAY',
+  TEXTILES = 'TEXTILES',
+  WOOD = 'WOOD',
 }
 
 export enum OrderStatus {

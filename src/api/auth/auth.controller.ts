@@ -12,8 +12,8 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   async login(@Body() loginDto: LoginDto) {
-    const accessToken = await this.authService.login(loginDto);
-    return new ApiResponse({ accessToken }, 'Login successful.');
+    const data = await this.authService.login(loginDto);
+    return new ApiResponse(data, 'Login successful.');
   }
 
   @UseGuards(JwtGuard)

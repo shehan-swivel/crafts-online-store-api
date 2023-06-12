@@ -38,6 +38,7 @@ export class AuthService {
       password: passwordHash,
       role: Role.ADMIN,
       email: '',
+      requirePasswordChange: true,
     };
 
     // Create default admin user
@@ -49,7 +50,7 @@ export class AuthService {
    * @param {LoginDto} loginDto
    * @returns {Promise<string>}
    */
-  async login(loginDto: LoginDto): Promise<string> {
+  async login(loginDto: LoginDto): Promise<{ requirePasswordChange: boolean; accessToken: string }> {
     const user = await this.usersService.findByUsername(loginDto.username);
 
     // Throw an error if user is not found
@@ -65,7 +66,7 @@ export class AuthService {
     }
 
     const accessToken = await this.getToken(user.id, user.username, user.role);
-    return accessToken;
+    return { requirePasswordChange: user.requirePasswordChange, accessToken };
   }
 
   /**
@@ -108,6 +109,7 @@ export class AuthService {
 
     // Set the new password and save
     user.password = await this.hashData(newPassword);
+    user.requirePasswordChange = false;
     return user.save();
   }
 
