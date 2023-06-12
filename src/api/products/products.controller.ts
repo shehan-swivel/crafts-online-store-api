@@ -14,7 +14,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { IdParamDto } from 'src/common/dto';
 import { ApiResponse } from 'src/common/responses';
-import { JwtGuard } from '../auth/guards';
+import { AccessTokenGuard } from '../auth/guards';
 import { CreateProductDto, ProductQuery, UpdateProductDto } from './dto';
 import { ProductsService } from './products.service';
 
@@ -22,7 +22,7 @@ import { ProductsService } from './products.service';
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @UseGuards(JwtGuard)
+  @UseGuards(AccessTokenGuard)
   @Post()
   @UseInterceptors(FileInterceptor('image'))
   async create(
@@ -39,7 +39,7 @@ export class ProductsController {
     return new ApiResponse(data);
   }
 
-  @UseGuards(JwtGuard)
+  @UseGuards(AccessTokenGuard)
   @Put(':id')
   @UseInterceptors(FileInterceptor('image'))
   async update(
@@ -51,7 +51,7 @@ export class ProductsController {
     return new ApiResponse(data, 'Product updated successfully');
   }
 
-  @UseGuards(JwtGuard)
+  @UseGuards(AccessTokenGuard)
   @Delete(':id')
   async delete(@Param() params: IdParamDto): Promise<ApiResponse> {
     await this.productsService.delete(params.id);

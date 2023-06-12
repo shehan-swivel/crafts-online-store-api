@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { IdParamDto } from 'src/common/dto';
 import { ApiResponse } from 'src/common/responses';
-import { JwtGuard } from '../auth/guards';
+import { AccessTokenGuard } from '../auth/guards';
 import { CreateOrderDto, UpdateOrderStatusDto } from './dto';
 import { OrdersService } from './orders.service';
 
@@ -15,14 +15,14 @@ export class OrdersController {
     return new ApiResponse(data, 'Order created successfully');
   }
 
-  @UseGuards(JwtGuard)
+  @UseGuards(AccessTokenGuard)
   @Get()
   async findAll(): Promise<ApiResponse> {
     const data = await this.ordersService.findAll();
     return new ApiResponse(data);
   }
 
-  @UseGuards(JwtGuard)
+  @UseGuards(AccessTokenGuard)
   @Patch(':id')
   async updateStatus(
     @Param() params: IdParamDto,
@@ -32,7 +32,7 @@ export class OrdersController {
     return new ApiResponse(data, 'Order status updated successfully');
   }
 
-  @UseGuards(JwtGuard)
+  @UseGuards(AccessTokenGuard)
   @Delete(':id')
   async delete(@Param() params: IdParamDto): Promise<ApiResponse> {
     await this.ordersService.delete(params.id);

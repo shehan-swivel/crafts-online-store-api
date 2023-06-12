@@ -1,4 +1,10 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -50,7 +56,9 @@ export class AuthService {
    * @param {LoginDto} loginDto
    * @returns {Promise<string>}
    */
-  async login(loginDto: LoginDto): Promise<{ requirePasswordChange: boolean; accessToken: string }> {
+  async login(
+    loginDto: LoginDto,
+  ): Promise<{ requirePasswordChange: boolean; accessToken: string; refreshToken: string }> {
     const user = await this.usersService.findByUsername(loginDto.username);
 
     // Throw an error if user is not found
@@ -65,8 +73,10 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const accessToken = await this.getToken(user.id, user.username, user.role);
-    return { requirePasswordChange: user.requirePasswordChange, accessToken };
+    const tokens = await this.getTokens(user.id, user.username, user.role);
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
+
+    return { requirePasswordChange: user.requirePasswordChange, ...tokens };
   }
 
   /**
@@ -114,21 +124,72 @@ export class AuthService {
   }
 
   /**
+   * Refresh 'access token' and 'refresh token'
+   * @param userId string
+   * @param refreshToken string
+   * @returns {Promise<{ accessToken: string; refreshToken: string }>}
+   */
+  async refreshTokens(userId: string, refreshToken: string): Promise<{ accessToken: string; refreshToken: string }> {
+    const user = await this.usersService.findById(userId);
+
+    if (!user || !user.refreshToken) {
+      throw new ForbiddenException('Access Denied');
+    }
+
+    const isRefreshTokensMatched = await bcrypt.compare(refreshToken, user.refreshToken);
+
+    if (!isRefreshTokensMatched) {
+      throw new ForbiddenException('Access Denied');
+    }
+
+    const tokens = await this.getTokens(user.id, user.email, user.role);
+    await this.updateRefreshToken(user.id, tokens.refreshToken);
+
+    return tokens;
+  }
+
+  /**
+   * Update refresh token in the database
+   * @param userId string
+   * @param refreshToken string
+   * @returns {Promise<void>}
+   */
+  private async updateRefreshToken(userId: string, refreshToken: string): Promise<void> {
+    const hashedRefreshToken = await this.hashData(refreshToken);
+    await this.usersService.update(userId, {
+      refreshToken: hashedRefreshToken,
+    });
+  }
+
+  /**
    * Generate a jwt token
    * @param {string} userId
    * @param {string} username
    * @param {Role} role
-   * @returns {Promise<string>}
+   * @returns {Promise<{ accessToken: string; refreshToken: string }>}
    */
-  private async getToken(userId: string, username: string, role: Role): Promise<string> {
+  private async getTokens(
+    userId: string,
+    username: string,
+    role: Role,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const payload = { sub: userId, username, role };
 
-    const accessToken = await this.jwtService.signAsync(payload, {
-      secret: process.env.JWT_ACCESS_TOKEN_SECRET,
-      expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRED_IN,
-    });
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(payload, {
+        secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
+        expiresIn: this.configService.get('JWT_ACCESS_TOKEN_EXPIRED_IN'),
+      }),
+      this.jwtService.signAsync(payload, {
+        secret: this.configService.get('JWT_REFRESH_TOKEN_SECRET'),
+        expiresIn: this.configService.get('JWT_REFRESH_TOKEN_EXPIRED_IN'),
+      }),
+    ]);
 
-    return accessToken;
+    return {
+      accessToken,
+      refreshToken,
+    };
   }
 
   /**

@@ -9,6 +9,7 @@ export type UserDocument = HydratedDocument<User>;
   toJSON: {
     transform: (_doc, ret) => {
       delete ret.password;
+      delete ret.refreshToken;
       delete ret.__v;
       return ret;
     },
@@ -30,6 +31,9 @@ export class User {
 
   @Prop()
   requirePasswordChange: boolean;
+
+  @Prop()
+  refreshToken: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
