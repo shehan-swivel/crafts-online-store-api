@@ -43,9 +43,10 @@ export class ProductsService {
    * Updates an existing product.
    * @param {string} id
    * @param {UpdateProductDto} updateProductDto
+   * @param {Express.Multer.File} file
    * @returns {Promise<Product>}
    */
-  async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
+  async update(id: string, updateProductDto: UpdateProductDto, file: Express.Multer.File): Promise<Product> {
     const product = await this.productModel.findById(id);
 
     // Throw not found error when product is not found
@@ -53,13 +54,19 @@ export class ProductsService {
       throw new NotFoundException('Product not found');
     }
 
-    const { name, description, qty, price, category } = updateProductDto;
+    // Update product image if new image has been provided
+    if (file) {
+      updateProductDto.image = await this.s3Service.upload(file, product.image); // Assign uploaded image url
+    }
+
+    const { name, description, qty, price, category, image } = updateProductDto;
 
     product.name = name;
     product.description = description;
     product.qty = qty;
     product.price = price;
     product.category = category;
+    product.image = image;
 
     return product.save();
   }

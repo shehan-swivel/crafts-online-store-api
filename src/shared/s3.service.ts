@@ -18,9 +18,10 @@ export class S3Service {
     },
   });
 
-  async upload(file: Express.Multer.File): Promise<string> {
+  async upload(file: Express.Multer.File, filename?: string): Promise<string> {
     const bucketName = this.configService.get('AWS_S3_BUCKET');
-    const key = uuid() + extname(file.originalname);
+    // When updating a product image, replace image by using same filename
+    const key = filename ? filename.split('/')[3] : uuid() + extname(file.originalname);
 
     const putParams = {
       Bucket: bucketName,

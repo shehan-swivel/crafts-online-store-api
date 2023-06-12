@@ -19,5 +19,5 @@ export class CreateProductDto {
   @IsEnum(ProductCategory)
   category: ProductCategory;
 
-  image: string;
+  image: any;
 }

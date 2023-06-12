@@ -41,8 +41,13 @@ export class ProductsController {
 
   @UseGuards(JwtGuard)
   @Put(':id')
-  async update(@Param() params: IdParamDto, @Body() updateProductDto: UpdateProductDto): Promise<ApiResponse> {
-    const data = await this.productsService.update(params.id, updateProductDto);
+  @UseInterceptors(FileInterceptor('image'))
+  async update(
+    @Param() params: IdParamDto,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() updateProductDto: UpdateProductDto,
+  ): Promise<ApiResponse> {
+    const data = await this.productsService.update(params.id, updateProductDto, file);
     return new ApiResponse(data, 'Product updated successfully');
   }
 
