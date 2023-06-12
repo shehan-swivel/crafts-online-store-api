@@ -7,7 +7,6 @@ import { UsersModule } from './api/users/users.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProductsModule } from './api/products/products.module';
-import { SharedModule } from './shared/shared.module';
 import { OrdersModule } from './api/orders/orders.module';
 
 @Module({
@@ -18,7 +17,6 @@ import { OrdersModule } from './api/orders/orders.module';
     UsersModule,
     AdminModule,
     ProductsModule,
-    SharedModule,
     OrdersModule,
   ],
   controllers: [AppController],

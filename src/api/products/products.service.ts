@@ -16,7 +16,9 @@ export class ProductsService {
    * @returns {Promise<Product>}
    */
   async create(createProductDto: CreateProductDto, file: Express.Multer.File): Promise<Product> {
-    // TODO: image upload
+    if (file) {
+      createProductDto.image = await this.s3Service.upload(file); // Assign uploaded image url
+    }
     return this.productModel.create(createProductDto);
   }
 
