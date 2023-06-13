@@ -5,7 +5,7 @@ import { AddressDto } from './address.dto';
 import { OrderItemDto } from './order-item.dto';
 
 export class CreateOrderDto {
-  @IsNotEmpty()
+  @ValidateIf((_, value) => !!value)
   @IsNumber()
   amount: number;
 

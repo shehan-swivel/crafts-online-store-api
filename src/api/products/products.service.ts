@@ -28,7 +28,7 @@ export class ProductsService {
    * @returns {Promise<Product[]>}
    */
   async findAll(query: ProductQuery): Promise<Product[]> {
-    const { name, category } = query;
+    const { name, category, limit } = query;
 
     const filter: any = {};
 
@@ -36,7 +36,12 @@ export class ProductsService {
     if (name) filter.name = new RegExp(name, 'i');
     if (category) filter.category = category;
 
-    return await this.productModel.find(filter).collation({ locale: 'en' }).exec();
+    return await this.productModel
+      .find(filter)
+      .collation({ locale: 'en' })
+      .sort({ createdAt: 'desc' })
+      .limit(limit)
+      .exec();
   }
 
   /**

@@ -16,6 +16,7 @@ export class OrdersService {
    * @returns {Promise<Order>}
    */
   async create(createOrderDto: CreateOrderDto): Promise<Order> {
+    let total = 0;
     createOrderDto.status = OrderStatus.PENDING;
 
     const productIds = createOrderDto.items.map((item) => item.product);
@@ -37,9 +38,13 @@ export class OrdersService {
       } else {
         // Subtract product quantities when quantities are available
         product.qty = product.qty - itemsMap[product.id];
+
+        // Calculate total price
+        total += product.price * itemsMap[product.id];
       }
     }
 
+    createOrderDto.amount = total;
     const result = await this.orderModel.create(createOrderDto);
 
     // Update each product's quantity
