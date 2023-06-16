@@ -56,9 +56,7 @@ export class AuthService {
    * @param {LoginDto} loginDto
    * @returns {Promise<string>}
    */
-  async login(
-    loginDto: LoginDto,
-  ): Promise<{ requirePasswordChange: boolean; accessToken: string; refreshToken: string }> {
+  async login(loginDto: LoginDto): Promise<{ accessToken: string; refreshToken: string; user: User }> {
     const user = await this.usersService.findByUsername(loginDto.username);
 
     // Throw an error if user is not found
@@ -76,7 +74,7 @@ export class AuthService {
     const tokens = await this.getTokens(user.id, user.username, user.role);
     await this.updateRefreshToken(user.id, tokens.refreshToken);
 
-    return { requirePasswordChange: user.requirePasswordChange, ...tokens };
+    return { user, ...tokens };
   }
 
   /**

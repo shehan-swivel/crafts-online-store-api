@@ -9,6 +9,6 @@ import { SharedModule } from 'src/shared/shared.module';
   imports: [MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]), SharedModule],
   controllers: [ProductsController],
   providers: [ProductsService],
-  exports: [ProductsService],
+  exports: [ProductsService, MongooseModule],
 })
 export class ProductsModule {}

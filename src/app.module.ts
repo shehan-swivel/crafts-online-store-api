@@ -8,6 +8,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProductsModule } from './api/products/products.module';
 import { OrdersModule } from './api/orders/orders.module';
+import { StatsModule } from './api/stats/stats.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { OrdersModule } from './api/orders/orders.module';
     AdminModule,
     ProductsModule,
     OrdersModule,
+    StatsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

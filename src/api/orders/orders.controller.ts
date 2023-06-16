@@ -12,7 +12,7 @@ export class OrdersController {
   @Post()
   async create(@Body() createOrderDto: CreateOrderDto): Promise<ApiResponse> {
     const data = await this.ordersService.create(createOrderDto);
-    return new ApiResponse(data, 'Order created successfully');
+    return new ApiResponse(data, 'Your order has been placed successfully. Thank you for choosing our service');
   }
 
   @UseGuards(AccessTokenGuard)
