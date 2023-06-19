@@ -18,7 +18,7 @@ export class CreateOrderDto {
   @Type(() => OrderItemDto)
   items: OrderItemDto[];
 
-  note: string;
+  note?: string;
 
   @IsNotEmpty()
   customerName: string;
@@ -28,7 +28,7 @@ export class CreateOrderDto {
 
   @ValidateIf((_, value) => !!value)
   @IsEmail()
-  email: string;
+  email?: string;
 
   @IsNotEmpty()
   @ValidateNested()
@@ -36,5 +36,5 @@ export class CreateOrderDto {
   billingAddress: AddressDto;
 
   @ValidateNested()
-  shippingAddress: AddressDto;
+  shippingAddress?: AddressDto;
 }

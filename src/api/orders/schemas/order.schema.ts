@@ -26,7 +26,7 @@ export class Order {
   items: OrderItem[];
 
   @Prop()
-  note: string;
+  note?: string;
 
   /**
    * Customer data also will be saved in the order object since this application is not handling customer accounts.
@@ -39,13 +39,13 @@ export class Order {
   phoneNumber: string;
 
   @Prop()
-  email: string;
+  email?: string;
 
   @Prop({ required: true })
   billingAddress: Address;
 
   @Prop()
-  shippingAddress: Address;
+  shippingAddress?: Address;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);
