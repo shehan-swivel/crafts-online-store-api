@@ -41,9 +41,9 @@ export class UsersService {
 
     const { role, email, refreshToken } = updateUserDto;
 
-    user.role = role !== undefined ? role : user.role;
-    user.email = email !== undefined ? email : user.email;
-    user.refreshToken = refreshToken !== undefined ? refreshToken : user.refreshToken;
+    if (role !== undefined) user.role = role;
+    if (email !== undefined) user.email = email;
+    if (refreshToken !== undefined) user.refreshToken = refreshToken;
 
     return user.save();
   }
