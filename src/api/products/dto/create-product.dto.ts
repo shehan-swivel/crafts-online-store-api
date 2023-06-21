@@ -1,4 +1,4 @@
-import { IsEnum, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsEnum, IsNotEmpty } from 'class-validator';
 import { ProductCategory } from 'src/constants/enums';
 
 export class CreateProductDto {
@@ -8,11 +8,9 @@ export class CreateProductDto {
   description: string;
 
   @IsNotEmpty()
-  // @IsNumber()
   qty: number;
 
   @IsNotEmpty()
-  // @IsNumber()
   price: number;
 
   @IsNotEmpty()
