@@ -9,5 +9,11 @@ export class ProductQuery {
   category?: ProductCategory;
 
   @ApiProperty()
+  orderBy?: string;
+
+  @ApiProperty()
+  order?: string;
+
+  @ApiProperty()
   limit?: number;
 }

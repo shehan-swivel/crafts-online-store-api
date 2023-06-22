@@ -28,20 +28,28 @@ export class ProductsService {
    * @returns {Promise<Product[]>}
    */
   async findAll(query: ProductQuery): Promise<Product[]> {
-    const { name, category, limit } = query;
+    const { name, category, orderBy, order, limit } = query;
+
+    // To avoid sort by not defined fields and control which fields can be used to sort
+    const orderByValues = { name: true, qty: true, price: true, category: true };
+    // To avoid sort by not defined orders and control which order can be used to sort
+    const orderValues = { asc: true, desc: true };
 
     const filter: any = {};
+    const sort = {};
 
     // Set filter values
     if (name) filter.name = new RegExp(name, 'i');
     if (category) filter.category = category;
 
-    return await this.productModel
-      .find(filter)
-      .collation({ locale: 'en' })
-      .sort({ createdAt: 'desc' })
-      .limit(limit)
-      .exec();
+    // Set sorting field and order
+    if (orderByValues[orderBy] && orderValues[order]) {
+      sort[orderBy] = order;
+    } else {
+      sort['createdAt'] = 'desc';
+    }
+
+    return await this.productModel.find(filter).collation({ locale: 'en' }).sort(sort).limit(limit).exec();
   }
 
   /**
