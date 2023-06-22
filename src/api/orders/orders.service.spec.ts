@@ -10,9 +10,11 @@ import { Product } from '../products/schemas/product.schema';
 import { CreateOrderDto } from './dto';
 import { OrdersService } from './orders.service';
 import { Order } from './schemas/order.schema';
+import { LastOrderNumber } from './schemas/last-order-number.schema';
 
 const orderStub = (): Order => {
   return {
+    orderNumber: '0001',
     amount: 1000,
     status: OrderStatus.PENDING,
     items: [
@@ -65,12 +67,19 @@ const productStub = (): Product => {
   };
 };
 
+const lastOrderNumberStub = (): LastOrderNumber => {
+  return {
+    number: 1,
+  };
+};
+
 const mockedOrderId = '642eb1b706276e3cc9219250';
 
 describe('OrdersService', () => {
   let ordersService: OrdersService;
   let productsService: ProductsService;
   let model: Model<Order>;
+  let lastOrderNumberModel: Model<LastOrderNumber>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -96,12 +105,20 @@ describe('OrdersService', () => {
           provide: getModelToken(Product.name),
           useValue: {},
         },
+        {
+          provide: getModelToken(LastOrderNumber.name),
+          useValue: {
+            create: jest.fn().mockResolvedValue(lastOrderNumberStub()),
+            findOne: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
     ordersService = module.get<OrdersService>(OrdersService);
     productsService = module.get<ProductsService>(ProductsService);
     model = module.get<Model<Order>>(getModelToken(Order.name));
+    lastOrderNumberModel = module.get<Model<LastOrderNumber>>(getModelToken(LastOrderNumber.name));
   });
 
   afterEach(() => {
@@ -142,7 +159,13 @@ describe('OrdersService', () => {
       it('should create the order and return it', async () => {
         const product1 = { ...productStub(), qty: 12, id: '642eb1b706276e3cc9219257' };
         const product2 = { ...productStub(), qty: 20, id: '642eb1b706276e3cc9219258' };
+
         jest.spyOn(productsService, 'findByIds').mockResolvedValue([product1, product2] as any);
+
+        const lastOrderNUmberSaveStub = { ...lastOrderNumberStub(), save: jest.fn() };
+        jest.spyOn(lastOrderNumberModel, 'findOne').mockResolvedValue(lastOrderNUmberSaveStub);
+        jest.spyOn(lastOrderNUmberSaveStub, 'save').mockResolvedValue({ ...lastOrderNumberStub(), number: 2 });
+
         jest.spyOn(productsService, 'findByIdAndUpdate').mockResolvedValue(productStub() as any);
 
         const result = await ordersService.create(createOrderDtoStub());

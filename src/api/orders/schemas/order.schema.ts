@@ -16,6 +16,9 @@ export type OrderDocument = HydratedDocument<Order>;
   },
 })
 export class Order {
+  @Prop({ required: true, unique: true })
+  orderNumber: string;
+
   @Prop({ required: true })
   amount: number;
 
