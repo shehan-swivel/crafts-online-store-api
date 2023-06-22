@@ -7,7 +7,7 @@ import { OrderStatus, ProductCategory } from 'src/constants/enums';
 import { S3Service } from 'src/shared/s3.service';
 import { ProductsService } from '../products/products.service';
 import { Product } from '../products/schemas/product.schema';
-import { CreateOrderDto } from './dto';
+import { CreateOrderDto, OrderQuery } from './dto';
 import { OrdersService } from './orders.service';
 import { Order } from './schemas/order.schema';
 import { LastOrderNumber } from './schemas/last-order-number.schema';
@@ -178,14 +178,18 @@ describe('OrdersService', () => {
   describe('When findAll is called', () => {
     it('should return list of orders', async () => {
       jest.spyOn(model, 'find').mockReturnValue({
-        sort: jest.fn().mockReturnValue({
-          populate: jest.fn().mockReturnValue({
-            exec: jest.fn().mockResolvedValue([orderStub()]),
+        collation: jest.fn().mockReturnValue({
+          sort: jest.fn().mockReturnValue({
+            populate: jest.fn().mockReturnValue({
+              exec: jest.fn().mockResolvedValue([orderStub()]),
+            }),
           }),
         }),
       } as any);
 
-      const employees = await ordersService.findAll();
+      const query = {} as OrderQuery;
+
+      const employees = await ordersService.findAll(query);
       expect(employees).toEqual([orderStub()]);
     });
   });

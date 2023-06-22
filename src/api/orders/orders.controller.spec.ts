@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Types } from 'mongoose';
 import { IdParamDto } from 'src/common/dto';
 import { OrderStatus } from 'src/constants/enums';
-import { CreateOrderDto } from './dto';
+import { CreateOrderDto, OrderQuery } from './dto';
 import { OrdersController } from './orders.controller';
 import { OrdersService } from './orders.service';
 import { Order } from './schemas/order.schema';
@@ -86,9 +86,10 @@ describe('OrdersController', () => {
 
   describe('When findAll is called', () => {
     it('should return list of orders', async () => {
-      const response = await controller.findAll();
+      const query = {} as OrderQuery;
+      const response = await controller.findAll(query);
 
-      expect(service.findAll).toHaveBeenCalledWith();
+      expect(service.findAll).toHaveBeenCalledWith(query);
       expect(response).toEqual({ data: [orderStub()], message: '' });
     });
   });
