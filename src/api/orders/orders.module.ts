@@ -1,12 +1,19 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ProductsModule } from '../products/products.module';
 import { OrdersController } from './orders.controller';
 import { OrdersService } from './orders.service';
+import { LastOrderNumber, LastOrderNumberSchema } from './schemas/last-order-number.schema';
 import { Order, OrderSchema } from './schemas/order.schema';
-import { ProductsModule } from '../products/products.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }]), ProductsModule],
+  imports: [
+    MongooseModule.forFeature([
+      { name: Order.name, schema: OrderSchema },
+      { name: LastOrderNumber.name, schema: LastOrderNumberSchema },
+    ]),
+    ProductsModule,
+  ],
   controllers: [OrdersController],
   providers: [OrdersService],
   exports: [MongooseModule],

@@ -10,6 +10,7 @@ import { Analytics } from './interfaces';
 import { S3Service } from 'src/shared/s3.service';
 import { ConfigService } from '@nestjs/config';
 import { OrderStatus, ProductCategory } from 'src/constants/enums';
+import { LastOrderNumber } from '../orders/schemas/last-order-number.schema';
 
 const analyticsStub: Analytics = {
   totalOrders: 10,
@@ -22,6 +23,7 @@ const analyticsStub: Analytics = {
 
 const orderStub = (): Order => {
   return {
+    orderNumber: '0001',
     amount: 13400,
     status: OrderStatus.PENDING,
     items: [
@@ -81,6 +83,10 @@ describe('StatsService', () => {
             count: jest.fn(),
             aggregate: jest.fn(),
           },
+        },
+        {
+          provide: getModelToken(LastOrderNumber.name),
+          useValue: {},
         },
       ],
     }).compile();

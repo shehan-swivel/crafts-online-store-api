@@ -9,6 +9,7 @@ import { Order } from './schemas/order.schema';
 
 const orderStub = (): Order => {
   return {
+    orderNumber: '0001',
     amount: 1000,
     status: OrderStatus.PENDING,
     items: [

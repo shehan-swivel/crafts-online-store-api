@@ -4,11 +4,16 @@ import { Model } from 'mongoose';
 import { OrderStatus } from 'src/constants/enums';
 import { ProductsService } from '../products/products.service';
 import { CreateOrderDto, UpdateOrderStatusDto } from './dto';
+import { LastOrderNumber } from './schemas/last-order-number.schema';
 import { Order } from './schemas/order.schema';
 
 @Injectable()
 export class OrdersService {
-  constructor(@InjectModel(Order.name) private orderModel: Model<Order>, private productService: ProductsService) {}
+  constructor(
+    @InjectModel(Order.name) private orderModel: Model<Order>,
+    @InjectModel(LastOrderNumber.name) private lastOrderNumberModel: Model<LastOrderNumber>,
+    private productService: ProductsService,
+  ) {}
 
   /**
    * Create a new order
@@ -17,7 +22,6 @@ export class OrdersService {
    */
   async create(createOrderDto: CreateOrderDto): Promise<Order> {
     let total = 0;
-    createOrderDto.status = OrderStatus.PENDING;
 
     const productIds = createOrderDto.items.map((item) => item.product);
     const products = await this.productService.findByIds(productIds);
@@ -44,13 +48,31 @@ export class OrdersService {
       }
     }
 
+    // Find last order number
+    let lastOrderNumberDoc = await this.lastOrderNumberModel.findOne();
+
+    // Create last order number document if not exist
+    if (!lastOrderNumberDoc) {
+      lastOrderNumberDoc = await this.lastOrderNumberModel.create({ number: 0 });
+    }
+
+    const currentOrderNumber = lastOrderNumberDoc.number + 1;
+    const orderNumber = currentOrderNumber.toString().padStart(4, '0');
+
+    createOrderDto.status = OrderStatus.PENDING;
+    createOrderDto.orderNumber = orderNumber;
     createOrderDto.amount = total;
+
     const result = await this.orderModel.create(createOrderDto);
 
     // Update each product's quantity
     for (const product of products) {
       await this.productService.findByIdAndUpdate(product.id, { qty: product.qty });
     }
+
+    // Update the last used order number in the database
+    lastOrderNumberDoc.number = currentOrderNumber;
+    await lastOrderNumberDoc.save();
 
     return result;
   }
