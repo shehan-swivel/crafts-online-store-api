@@ -3,12 +3,10 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiForbiddenResponse,
-  ApiHeader,
-  ApiHeaders,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
-  ApiUnauthorizedResponse,
+  ApiUnauthorizedResponse
 } from '@nestjs/swagger';
 import { RequestWithUser } from 'src/common/interfaces';
 import { ApiResponse } from 'src/common/responses';
