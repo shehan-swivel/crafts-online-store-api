@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiNotFoundResponse,
@@ -9,7 +9,7 @@ import {
 import { IdParamDto } from 'src/common/dto';
 import { ApiResponse } from 'src/common/responses';
 import { AccessTokenGuard } from '../auth/guards';
-import { CreateOrderDto, UpdateOrderStatusDto } from './dto';
+import { CreateOrderDto, OrderQuery, UpdateOrderStatusDto } from './dto';
 import { OrdersService } from './orders.service';
 
 @ApiTags('Orders')
@@ -29,8 +29,8 @@ export class OrdersController {
   @Get()
   @ApiBearerAuth()
   @ApiOkResponse({ description: 'Orders fetched successfully.' })
-  async findAll(): Promise<ApiResponse> {
-    const data = await this.ordersService.findAll();
+  async findAll(@Query() query: OrderQuery): Promise<ApiResponse> {
+    const data = await this.ordersService.findAll(query);
     return new ApiResponse(data);
   }
 

@@ -2,18 +2,18 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ProductCategory } from 'src/constants/enums';
 
 export class ProductQuery {
-  @ApiProperty()
+  @ApiProperty({ required: false })
   name?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false, enum: ProductCategory })
   category?: ProductCategory;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   orderBy?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false, enum: ['asc', 'desc'] })
   order?: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   limit?: number;
 }

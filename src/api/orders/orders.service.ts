@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { OrderStatus } from 'src/constants/enums';
 import { ProductsService } from '../products/products.service';
-import { CreateOrderDto, UpdateOrderStatusDto } from './dto';
+import { CreateOrderDto, OrderQuery, UpdateOrderStatusDto } from './dto';
 import { LastOrderNumber } from './schemas/last-order-number.schema';
 import { Order } from './schemas/order.schema';
 
@@ -79,10 +79,32 @@ export class OrdersService {
 
   /**
    * Retrieves all orders from the database.
+   * @param {OrderQuery} query
    * @returns {Promise<Order[]>}
    */
-  async findAll(): Promise<Order[]> {
-    return this.orderModel.find().sort({ createdAt: 'desc' }).populate('items.product').exec();
+  async findAll(query: OrderQuery): Promise<Order[]> {
+    const { orderNumber, status, orderBy, order } = query;
+
+    // To avoid sort by not defined fields and control which fields can be used to sort
+    const orderByValues = { orderNumber: true, amount: true, status: true, customerName: true };
+    // To avoid sort by not defined orders and control which order can be used to sort
+    const orderValues = { asc: true, desc: true };
+
+    const filter: any = {};
+    const sort: any = {};
+
+    // Set filter values
+    if (orderNumber) filter.orderNumber = new RegExp(orderNumber, 'i');
+    if (status) filter.status = status;
+
+    // Set sorting field and order
+    if (orderByValues[orderBy] && orderValues[order]) {
+      sort[orderBy] = order;
+    } else {
+      sort.createdAt = 'desc';
+    }
+
+    return this.orderModel.find(filter).collation({ locale: 'en' }).sort(sort).populate('items.product').exec();
   }
 
   /**
