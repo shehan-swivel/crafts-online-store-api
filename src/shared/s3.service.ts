@@ -13,13 +13,13 @@ export class S3Service {
   s3 = new S3Client({
     region: this.region,
     credentials: {
-      accessKeyId: this.configService.get('AWS_ACCESS_KEY_ID'),
-      secretAccessKey: this.configService.get('AWS_SECRET_ACCESS_KEY'),
+      accessKeyId: this.configService.get('CRAFTIFY_AWS_ACCESS_KEY_ID'),
+      secretAccessKey: this.configService.get('CRAFTIFY_AWS_SECRET_ACCESS_KEY'),
     },
   });
 
   async upload(file: Express.Multer.File, filename?: string): Promise<string> {
-    const bucketName = this.configService.get('AWS_S3_BUCKET');
+    const bucketName = this.configService.get('CRAFTIFY_AWS_S3_BUCKET');
     // When updating a product image, replace image by using same filename
     const key = filename ? filename.split('/')[3] : uuid() + extname(file.originalname);
 
