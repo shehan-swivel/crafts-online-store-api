@@ -107,7 +107,7 @@ export class StatsService {
       totalProducts,
       totalOrders,
       pendingOrders,
-      totalRevenue: totalRevenue[0].amount,
+      totalRevenue: totalRevenue[0]?.amount ?? 0,
       orderCountPerDay,
       topSellingProducts,
     };

@@ -86,7 +86,7 @@ export class OrdersService {
     const { orderNumber, status, orderBy, order } = query;
 
     // To avoid sort by not defined fields and control which fields can be used to sort
-    const orderByValues = { orderNumber: true, amount: true, status: true, customerName: true };
+    const orderByValues = { orderNumber: true, amount: true, status: true, createdAt: true };
     // To avoid sort by not defined orders and control which order can be used to sort
     const orderValues = { asc: true, desc: true };
 
