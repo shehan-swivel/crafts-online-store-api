@@ -17,7 +17,7 @@ export class StatsService {
   ) {}
 
   /**
-   * Calculate analytics data
+   * Get analytics about products and sales.
    * @returns {Promise<Analytics>}
    */
   async getAnalytics(): Promise<Analytics> {
