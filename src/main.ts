@@ -6,7 +6,7 @@ import winstonLogger from './utils/winston.logger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    logger: winstonLogger,
+    logger: winstonLogger(),
   });
 
   app.setGlobalPrefix('api');
